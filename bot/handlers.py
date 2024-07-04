@@ -1,10 +1,11 @@
 from copy import deepcopy
-from aiogram.types import Message
-from json import loads, dumps
-from json.decoder import JSONDecodeError
 from datetime import datetime
+from json import dumps, loads
+from json.decoder import JSONDecodeError
+
+from aiogram.types import Message
+from mongo_connection import MONGO_PIPE, collection
 from settings import LOOKUP_DATE_UNITS, logger
-from mongo_connection import collection, MONGO_PIPE
 
 
 async def handle_message_request(message: Message):
@@ -39,6 +40,3 @@ async def handle_message_request(message: Message):
         await message.answer('{"error": "Ничего не найдено"}')
         return
     await message.answer(dumps(data))
-
-
-

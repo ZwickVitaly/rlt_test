@@ -1,8 +1,7 @@
-from sys import stdout
 from os import getenv
+from sys import stdout
 
 from loguru import logger
-
 
 DEBUG = getenv("DEBUG", "0") == "1"
 DOCKER = getenv("DOCKER_ENV", "0") == "1"

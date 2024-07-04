@@ -1,9 +1,7 @@
 from aiogram import Bot, Dispatcher
 from aiogram.methods import DeleteWebhook
-
-from settings import BOT_TOKEN, logger
 from handlers import handle_message_request
-
+from settings import BOT_TOKEN, logger
 
 logger.debug("Init bot")
 bot = Bot(BOT_TOKEN)
