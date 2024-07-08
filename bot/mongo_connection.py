@@ -15,7 +15,7 @@ MONGO_PIPE = [
     {
         "$group": {
             "_id": {"$dateTrunc": {"date": "$dt", "unit": None}},
-            "value": {"$sum": {"$ifNull": ["$value", 0]}},
+            "value": {"$sum": "$value"},
         },
     },
     {"$sort": {"_id": 1}},
