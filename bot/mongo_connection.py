@@ -15,14 +15,15 @@ MONGO_PIPE = [
     {
         "$group": {
             "_id": {"$dateTrunc": {"date": "$dt", "unit": None}},
-            "value": {"$sum": "$value"},
+            "value": {"$sum": {"$ifNull": ["$value", 0]}},
         },
     },
     {"$sort": {"_id": 1}},
+    {"$densify": {"field": "_id", "range": {"step": 1, "unit": None, "bounds": None}}},
     {
         "$group": {
             "_id": None,
-            "dataset": {"$push": "$value"},
+            "dataset": {"$push": {"$ifNull": ["$value", 0]}},
             "labels": {
                 "$push": {
                     "$dateToString": {"date": "$_id", "format": "%Y-%m-%dT%H:%M:%S"}

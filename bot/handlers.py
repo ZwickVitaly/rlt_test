@@ -1,5 +1,5 @@
 from copy import deepcopy
-from datetime import datetime
+from datetime import datetime, timedelta
 from json import dumps, loads
 from json.decoder import JSONDecodeError
 
@@ -31,9 +31,17 @@ async def handle_message_request(message: Message):
         logger.debug("Invalid grouper")
         await message.answer('{"error": "Невалидный формат группировки"}')
         return
+    start_exists = collection.find_one({}, {"dt": start})
+    if not start_exists.get("value"):
+        collection.insert_one({"dt": start, "value": 0})
+    end_exists = collection.find_one({}, {"dt": end})
+    if not end_exists.get("value"):
+        collection.insert_one({"dt": start, "value": 0})
     pipe = deepcopy(MONGO_PIPE)
-    pipe[0]["$match"]["dt"] = {"$gte": start, "$lt": end}
+    pipe[0]["$match"]["dt"] = {"$gte": start, "$lte": end}
     pipe[1]["$group"]["_id"]["$dateTrunc"]["unit"] = group_type
+    pipe[3]["$densify"]["range"]["unit"] = group_type
+    pipe[3]["$densify"]["range"]["bounds"] = [start, end + timedelta(milliseconds=1)]
     data = collection.aggregate(pipe).next()
     logger.info(f"Returning data: {data}")
     if not data:
